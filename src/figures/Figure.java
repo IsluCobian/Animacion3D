@@ -8,9 +8,11 @@ package figures;
 
 import strdatos.AnimationFeatures;
 import strdatos.Point;
+import strdatos.Point3D;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
 
 /**
  * Autor: Luis Cobian
@@ -281,34 +283,6 @@ public abstract class Figure {
         }
     }
 
-    protected void drawSol(Point centerPoint){
-        double x,y;
-        double y2 = centerPoint.y, x2 = centerPoint.x;
-        int Puntos = 200;
-        for (double t = 0; t <= (14*Math.PI); t+=(14*Math.PI)/Puntos) {
-            x = centerPoint.x + (17*Math.cos(t) + 7*Math.cos((17.0/7)*t)) * 3;
-            y = centerPoint.y - (17*Math.sin(t) - 7*Math.sin((17.0/7)*t)) * 3;
-            if (t != 0) {
-                drawLine((int) x, (int) y, (int) x2, (int) y2);
-            }
-            y2 = y;
-            x2 = x;
-        }
-    }
-
-    public void drawHumo(Point centerPoint){
-        double x,y;
-        double y2 = centerPoint.y, x2 = centerPoint.x;
-        int Puntos = 40;
-        for (double i = 0; i <= (2*Math.PI); i+=(2*Math.PI)/Puntos) {
-            y = centerPoint.y - i * 8;
-            x = centerPoint.x - (i * Math.cos(3 * i)) * 2;
-            drawLine((int) x, (int) y, (int) x2, (int) y2);
-            y2 = y;
-            x2 = x;
-        }
-    }
-
     protected void drawLine(int x1, int y1, int x2, int y2) {
         float steps;
         int dy = y2 - y1;
@@ -326,5 +300,31 @@ public abstract class Figure {
             putPixel(Math.round(x), Math.round(y), color);
         }
     }
-    
+
+    /*3D Methods*/
+    public void setPerspective(){
+
+    }
+
+    protected void drawQuadPrism(Point3D A, Point3D B, Point3D C){
+        Point3D[] points = new Point3D[8];
+
+        points[0] = A;
+        points[1] = B;
+        points[2] = C;
+        points[3] = new Point3D(A.x, A.y, B.z);
+        points[4] = new Point3D(B.x, A.y, A.z);
+        points[5] = new Point3D(A.x, C.y, A.z);
+        points[6] = new Point3D(B.x, C.y, B.z);
+        points[7] = new Point3D(B.x, C.y, A.z);
+
+        // Draw the edges of the quad prism
+        color = Color.red;
+        for (int i = 0; i < points.length; i++) {
+            Point3D p1 = points[i];
+            Point3D p2 = points[(i + 1) % points.length];
+            drawLine(p1.x, p1.y,p2.x,p2.y);
+        }
+
+    }
 }

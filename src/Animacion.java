@@ -1,5 +1,6 @@
 import figures.*;
 import strdatos.Point;
+import strdatos.Point3D;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,14 +38,45 @@ public class Animacion extends JFrame {
     @Override
     public void paint(Graphics g) {
         if (buffer == null) {
-            buffer = escenarios.get(0);
-            thread = new Thread(new Transforms(figures));
-            thread.start();
+            buffer = new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_ARGB);
+            new QuadPrism(new Point3D(200,180,20),new Point3D(50,90,20), new Point3D(200,180,100),buffer).draw();
+            new QuadPrism(new Point3D(400,300,20),new Point3D(150,250,20), new Point3D(400,300,100),buffer).draw();
+            Point3D[] points = {
+                    // Base de la T
+                    new Point3D(200, 450, 250),
+                    new Point3D(300, 450, 250),
+                    new Point3D(200, 200, 250),
+                    new Point3D(300, 200, 150),
+
+                    // Parte superior de la T
+                    new Point3D(200, 275, 250),
+                    new Point3D(200, 375, 250),
+
+                    new Point3D(100, 275, 250),
+                    new Point3D(100, 375, 250),
+
+                    // Base de la T
+                    new Point3D(200  - 30, 450  - 30, 250),
+                    new Point3D(300  - 30, 450  - 30, 250),
+                    new Point3D(200  - 30, 200  - 30, 250),
+                    new Point3D(300  - 30, 200  - 30, 150),
+
+                    // Parte superior de la T
+                    new Point3D(200  - 30, 275  - 30, 250),
+                    new Point3D(200  - 30, 375  - 30, 250),
+
+                    new Point3D(100  - 30, 275  - 30, 250),
+                    new Point3D(100  - 30, 375  - 30, 250)
+            };
+            //new PolyPrism(points,buffer).draw();
+            //thread = new Thread(new Transforms(figures));
+
+            //thread.start();
         }
 
 
-//        this.getGraphics().drawImage(buffer, 0, 0, this);
-        this.getGraphics().drawImage(bufferSec, 0, 0, this);
+        this.getGraphics().drawImage(buffer, 0, 0, this);
+        //this.getGraphics().drawImage(bufferSec, 0, 0, this);
     }
 
     public static void main(String[] args) {
