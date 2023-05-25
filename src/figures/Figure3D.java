@@ -11,7 +11,7 @@ import java.util.List;
 import java.awt.image.BufferedImage;
 
 public abstract class Figure3D {
-    protected Point3D startPoint, middlePoint ,endPoint, rotationPoint;
+    protected Point3D rotationPoint;
     protected BufferedImage buffer;
     private int ang;
     protected Color color;
@@ -19,14 +19,16 @@ public abstract class Figure3D {
     private AnimationFeatures animationFeatures;
     protected BufferedImage bufferMain;
 
+    protected List<Edge> scannedEdges;
+    protected int[] vector;
+
     public Figure3D() {
+        this.vector = new int[]{1,1,3};
     }
-    public Figure3D(Point3D startPoint, Point3D middlePoint , Point3D endPoint, BufferedImage buffer) {
-        this.startPoint = startPoint;
-        this.middlePoint = middlePoint;
-        this.endPoint = endPoint;
+    public Figure3D(Point3D[] points, BufferedImage buffer) {
         this.buffer = buffer;
         this.color = Color.black;
+        this.vector = new int[]{0,0,0};
         animationFeatures = new AnimationFeatures();
         bufferMain = null;
         rotationPoint = new Point3D(0,0,0);
@@ -73,48 +75,42 @@ public abstract class Figure3D {
         }
     }
     /*3D Methods*/
-    public void setPerspective(){
+    public void setVector(int[] vector){
 
     }
 
     protected void drawQuadPrism(Point3D A, Point3D B, Point3D C) {
-        Point3D[] points = new Point3D[8];
-        // Puntos cara Frontal
-        points[0] = A;
-        points[1] = new Point3D(B.x, A.y, A.z);
-        points[2] = B;
-        points[3] = new Point3D(A.x, B.y, A.z);
-        // Puntos cara trasera
-        points[4] = new Point3D(A.x - 20, A.y - 20, C.z);
-        points[5] = new Point3D(B.x - 20, A.y - 20, C.z);
-        points[6] = new Point3D(B.x - 20, B.y - 20, C.z);
-        points[7] = new Point3D(C.x - 20, B.y - 20, C.z);
+        if (scannedEdges == null) {
+            Point3D[] points = new Point3D[8];
+            // Puntos cara Frontal
+            points[0] = A;
+            points[1] = new Point3D(B.x, A.y, A.z);
+            points[2] = B;
+            points[3] = new Point3D(A.x, B.y, A.z);
+            // Puntos cara trasera
+            points[4] = new Point3D(A.x, A.y, C.z);
+            points[5] = new Point3D(B.x, A.y, C.z);
+            points[6] = new Point3D(B.x, B.y, C.z);
+            points[7] = new Point3D(C.x, B.y, C.z);
 
-        color = Color.red;
-        // Defino qué aristas se conectarán
-        List<Edge> edges = classifyEdges(points);
+            color = Color.red;
+            // Defino qué aristas se conectarán
+            scannedEdges = classifyEdges(points);
 
-        // Agregar las aristas que unen la cara frontal con la cara trasera
-        edges.add(new Edge(points[0], points[4]));
-        edges.add(new Edge(points[1], points[5]));
-        edges.add(new Edge(points[2], points[6]));
-        edges.add(new Edge(points[3], points[7]));
-        // Dibujar las aristas del prisma cuadrangular
-        for (Edge edge : edges) {
-            Point3D p1 = edge.p1;
-            Point3D p2 = edge.p2;
-            drawLine(p1.x, p1.y, p2.x, p2.y);
+            // Agregar las aristas que unen la cara frontal con la cara trasera
+            /*scannedEdges.add(new Edge(points[0], points[4]));
+            scannedEdges.add(new Edge(points[1], points[5]));
+            scannedEdges.add(new Edge(points[2], points[6]));
+            scannedEdges.add(new Edge(points[3], points[7]));*/
         }
+        // Dibujar las aristas del prisma cuadrangular
+        drawEdges();
     }
 
     protected void drawPolyPrism(Point3D[] points){
-        List<Edge> edges = classifyEdges(points);
+        scannedEdges = classifyEdges(points);
         color = Color.red;
-        for (Edge edge : edges) {
-            Point3D p1 = edge.p1;
-            Point3D p2 = edge.p2;
-            drawLine(p1.x, p1.y, p2.x, p2.y);
-        }
+        drawEdges();
     }
 
     //Transforms
@@ -143,10 +139,6 @@ public abstract class Figure3D {
     public void setBufferMain(BufferedImage bufferMain) {
         this.bufferMain = bufferMain;
     }
-
-    public Point3D getStart() {return startPoint;}
-
-    public Point3D getEnd() {return endPoint;}
 
     public BufferedImage getBufferMain() {
         return bufferMain;
@@ -231,7 +223,9 @@ public abstract class Figure3D {
         // Filtra las aristas para obtener solo las que son bordes
         List<Edge> filteredEdges = new ArrayList<>();
         for (Edge edge : edges) {
-            if (edge.p1.x == edge.p2.x || edge.p1.y == edge.p2.y) {
+            if ((edge.p1.x == edge.p2.x || edge.p1.y == edge.p2.y) && edge.p1.z == edge.p2.z) {
+                filteredEdges.add(edge);
+            } else if (edge.p1.x == edge.p2.x && edge.p1.y == edge.p2.y) {
                 filteredEdges.add(edge);
             }
         }
@@ -239,7 +233,22 @@ public abstract class Figure3D {
         return filteredEdges;
     }
 
-    private boolean edgeSharesPoints(Edge edge1, Edge edge2) {
-        return false;
+    protected void drawEdges(){
+        for (Edge edge : scannedEdges) {
+            Point3D p1 = edge.p1;
+            Point3D p2 = edge.p2;
+            double u = (vector[2] == 0) ? 0 : p1.z / vector[2];
+
+            // Calculate new coordinates
+            int newX1 = (int) (p1.x + vector[0] * u);
+            int newY1 = (int) (p1.y + vector[1] * u);
+
+            u = (vector[2] == 0) ? 0 : p2.z / vector[2];
+            int newX2 = (int) (p2.x + vector[0] * u);
+            int newY2 = (int) (p2.y + vector[1] * u);
+
+            // Draw the line with the new coordinates
+            drawLine(newX1, newY1, newX2, newY2);
+        }
     }
 }

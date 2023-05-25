@@ -39,36 +39,36 @@ public class Animacion extends JFrame {
     public void paint(Graphics g) {
         if (buffer == null) {
             buffer = new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_ARGB);
-            new QuadPrism(new Point3D(200,180,20),new Point3D(50,90,20), new Point3D(200,180,100),buffer).draw();
-            new QuadPrism(new Point3D(400,300,20),new Point3D(150,250,20), new Point3D(400,300,100),buffer).draw();
+            new QuadPrism(new Point3D(150,190,20),new Point3D(50,90,20), new Point3D(150,190,120),buffer).draw();
+            //new QuadPrism(new Point3D(400,300,20),new Point3D(20,100,20), new Point3D(400,300,100),buffer).draw();
             Point3D[] points = {
                     // Base de la T
-                    new Point3D(200, 450, 250),
-                    new Point3D(300, 450, 250),
-                    new Point3D(200, 200, 250),
-                    new Point3D(300, 200, 150),
+                    new Point3D(200, 450, 20),
+                    new Point3D(300, 450, 20),
+                    new Point3D(200, 200, 20),
+                    new Point3D(300, 200, 20),
 
                     // Parte superior de la T
-                    new Point3D(200, 275, 250),
-                    new Point3D(200, 375, 250),
+                    new Point3D(200, 275, 20),
+                    new Point3D(200, 375, 20),
 
-                    new Point3D(100, 275, 250),
-                    new Point3D(100, 375, 250),
+                    new Point3D(100, 275, 20),
+                    new Point3D(100, 375, 20),
 
                     // Base de la T
-                    new Point3D(200  - 30, 450  - 30, 250),
-                    new Point3D(300  - 30, 450  - 30, 250),
-                    new Point3D(200  - 30, 200  - 30, 250),
-                    new Point3D(300  - 30, 200  - 30, 150),
+                    new Point3D(200, 450, 50),
+                    new Point3D(300, 450, 50),
+                    new Point3D(200, 200, 50),
+                    new Point3D(300, 200, 50),
 
                     // Parte superior de la T
-                    new Point3D(200  - 30, 275  - 30, 250),
-                    new Point3D(200  - 30, 375  - 30, 250),
+                    new Point3D(200, 275, 50),
+                    new Point3D(200, 375, 50),
 
-                    new Point3D(100  - 30, 275  - 30, 250),
-                    new Point3D(100  - 30, 375  - 30, 250)
+                    new Point3D(100, 275, 50),
+                    new Point3D(100, 375, 50)
             };
-            //new PolyPrism(points,buffer).draw();
+            new PolyPrism(points,buffer).draw();
             //thread = new Thread(new Transforms(figures));
 
             //thread.start();
