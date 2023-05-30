@@ -16,7 +16,7 @@ public class Animacion extends JFrame {
     private static BufferedImage buffer;
     public BufferedImage bufferSec;
     private LinkedList<BufferedImage>  escenarios = new LinkedList<BufferedImage>();
-    private LinkedList<Figure> figures = new LinkedList<Figure>();
+    private LinkedList<Figure3D> figures = new LinkedList<Figure3D>();
     public int TIME = 0;
     Thread thread;
     private Graphics2D graphics;
@@ -32,6 +32,11 @@ public class Animacion extends JFrame {
         
         bufferSec = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 
+        QuadPrism quadPrism =  new QuadPrism(new Point3D(150,190,20),new Point3D(50,90,20), new Point3D(150,190,120),bufferSec);
+        quadPrism.setTimes(0,15);
+        quadPrism.setRotationVector(new int[]{720,920,50});
+        figures.add(quadPrism);
+
         setVisible(true);
     }
 
@@ -39,7 +44,9 @@ public class Animacion extends JFrame {
     public void paint(Graphics g) {
         if (buffer == null) {
             buffer = new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_ARGB);
-            new QuadPrism(new Point3D(150,190,20),new Point3D(50,90,20), new Point3D(150,190,120),buffer).draw();
+            buffer.getGraphics().setColor(Color.white);
+            buffer.getGraphics().fillRect(0,0,getWidth(),getHeight());
+            //new QuadPrism(new Point3D(150,190,20),new Point3D(50,90,20), new Point3D(150,190,120),buffer).draw();
             //new QuadPrism(new Point3D(400,300,20),new Point3D(20,100,20), new Point3D(400,300,100),buffer).draw();
             Point3D[] points = {
                     // Base de la T
@@ -68,15 +75,14 @@ public class Animacion extends JFrame {
                     new Point3D(100, 275, 50),
                     new Point3D(100, 375, 50)
             };
-            new PolyPrism(points,buffer).draw();
-            //thread = new Thread(new Transforms(figures));
-
-            //thread.start();
+            //new PolyPrism(points,buffer).draw();
+            thread = new Thread(new Transforms(figures));
+            thread.start();
         }
 
 
-        this.getGraphics().drawImage(buffer, 0, 0, this);
-        //this.getGraphics().drawImage(bufferSec, 0, 0, this);
+        //this.getGraphics().drawImage(buffer, 0, 0, this);
+        this.getGraphics().drawImage(bufferSec, 0, 0, this);
     }
 
     public static void main(String[] args) {
@@ -84,12 +90,12 @@ public class Animacion extends JFrame {
     }
     
     public class Transforms implements Runnable {
-        LinkedList<Figure> animate;
+        LinkedList<Figure3D> animate;
         int DELAY = 50;
-        Figure figure;
+        Figure3D figure;
         int c = 0;
 
-        public Transforms(LinkedList<Figure> animate) {
+        public Transforms(LinkedList<Figure3D> animate) {
             this.animate = animate;
         }
 
@@ -101,7 +107,7 @@ public class Animacion extends JFrame {
             if (figure.scale()){
                 figure.scalate(tiempo);
             }
-            if (figure.rotate()){
+            if (figure.rotating()){
                 figure.rotate(tiempo);
             }
         }
@@ -123,7 +129,7 @@ public class Animacion extends JFrame {
         public void removeAnimation(int i) {
             animate.remove(figure);
             if (!figure.isSteps()) {
-                figure.draw();
+                //figure.draw();
             }
         }
 

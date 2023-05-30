@@ -14,12 +14,12 @@ public class AnimationFeatures {
     int[] trasValues; //dx,dy
     double[] tiempos; //Inicio,Final
     double[] scaleValues; //sx,sy
-    int ang; //En Grados sexagesimales
+    protected int[] rotationVector;
 
     public AnimationFeatures() {
         trasValues = null;
         scaleValues = null;
-        ang = 0;
+        rotationVector = new int[]{0,0,0};
     }
     
     //getters
@@ -30,7 +30,7 @@ public class AnimationFeatures {
 
     public double[] getScaleValues() {return scaleValues;}
 
-    public int getAng() {return ang;}
+    public int[] getAng() {return rotationVector;}
     
     //setters
 
@@ -40,6 +40,6 @@ public class AnimationFeatures {
 
     public void setScaleValues(double[] scaleValues) {this.scaleValues = scaleValues;}
 
-    public void setAng(int ang) {this.ang = ang;}
+    public void setAng(int[] rotVector) {rotationVector = rotVector;}
    
 }
