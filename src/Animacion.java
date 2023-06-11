@@ -1,4 +1,6 @@
 import figures.*;
+import figures2D.Nube;
+import figures2D.Rectangulo;
 import strdatos.Point;
 import strdatos.Point3D;
 
@@ -17,14 +19,15 @@ public class Animacion extends JFrame {
     public BufferedImage bufferSec;
     private LinkedList<BufferedImage>  escenarios = new LinkedList<BufferedImage>();
     private LinkedList<Figure3D> figures = new LinkedList<Figure3D>();
-    public int TIME = 0;
+    public long TIME = 0;
     Thread thread;
     private Graphics2D graphics;
     int condicional = 0;
+    Avion avion;
 
     public Animacion() {
         setTitle("Practica");
-        setSize(750, 500);
+        setSize(1080, 700);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -34,8 +37,15 @@ public class Animacion extends JFrame {
 
         QuadPrism quadPrism =  new QuadPrism(new Point3D(150,190,20),new Point3D(50,90,20), new Point3D(150,190,120),bufferSec);
         quadPrism.setTimes(0,15);
-        quadPrism.setRotationVector(new int[]{720,920,50});
-        figures.add(quadPrism);
+        quadPrism.setRotationVector(new int[]{900,720,500});
+        quadPrism.setTranslation(500,500,100);
+        //figures.add(quadPrism);
+
+        avion =  new Avion(new Point3D(0,200,0),bufferSec);
+        avion.setTimes(0,25);
+        //avion.setRotationVector(new int[]{0,200,300});
+        //avion.setTranslation(800,300,100);
+        figures.add(avion);
 
         setVisible(true);
     }
@@ -46,42 +56,29 @@ public class Animacion extends JFrame {
             buffer = new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_ARGB);
             buffer.getGraphics().setColor(Color.white);
             buffer.getGraphics().fillRect(0,0,getWidth(),getHeight());
-            //new QuadPrism(new Point3D(150,190,20),new Point3D(50,90,20), new Point3D(150,190,120),buffer).draw();
-            //new QuadPrism(new Point3D(400,300,20),new Point3D(20,100,20), new Point3D(400,300,100),buffer).draw();
-            Point3D[] points = {
-                    // Base de la T
-                    new Point3D(200, 450, 20),
-                    new Point3D(300, 450, 20),
-                    new Point3D(200, 200, 20),
-                    new Point3D(300, 200, 20),
-
-                    // Parte superior de la T
-                    new Point3D(200, 275, 20),
-                    new Point3D(200, 375, 20),
-
-                    new Point3D(100, 275, 20),
-                    new Point3D(100, 375, 20),
-
-                    // Base de la T
-                    new Point3D(200, 450, 50),
-                    new Point3D(300, 450, 50),
-                    new Point3D(200, 200, 50),
-                    new Point3D(300, 200, 50),
-
-                    // Parte superior de la T
-                    new Point3D(200, 275, 50),
-                    new Point3D(200, 375, 50),
-
-                    new Point3D(100, 275, 50),
-                    new Point3D(100, 375, 50)
-            };
-            //new PolyPrism(points,buffer).draw();
+            new Rectangulo(new strdatos.Point(0,0), new strdatos.Point(getWidth(),getHeight()),buffer,Color.decode("#61C9E5")).draw();
+            new Nube(new Point(50,110),new Point(115,130),buffer,Color.white).draw();
+            new Nube(new Point(250,210),new Point(325,230),buffer,Color.white).draw();
+            new Nube(new Point(450,90),new Point(525,110),buffer,Color.white).draw();
+            new Nube(new Point(0,320),new Point(80,350),buffer,Color.white).draw();
+            new Nube(new Point(30,610),new Point(105,630),buffer,Color.white).draw();
+            new Nube(new Point(530,510),new Point(605,530),buffer,Color.white).draw();
+            new Nube(new Point(580,310),new Point(655,330),buffer,Color.white).draw();
+            new Nube(new Point(880,250),new Point(955,270),buffer,Color.white).draw();
             thread = new Thread(new Transforms(figures));
             thread.start();
         }
 
-
-        //this.getGraphics().drawImage(buffer, 0, 0, this);
+        if (TIME == 5000 || TIME == 15000){
+            avion.setRotationVector(new int[]{-580,0,0});
+        }
+        if (TIME == 9000 || TIME == 14050 || TIME == 19000){
+            avion.setRotationVector(new int[]{0,0,0});
+        }
+        if (TIME == 10000 || TIME == 20000){
+            avion.setRotationVector(new int[]{580,0,0});
+        }
+//        this.getGraphics().drawImage(buffer, 0, 0, this);
         this.getGraphics().drawImage(bufferSec, 0, 0, this);
     }
 

@@ -1,4 +1,4 @@
-/*
+package figures;/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -24,17 +24,17 @@ public class FloodFill {
             this.startPoint = startPoint;
             this.c = c.getRGB();
             this.buffer = buffer;
-            if(startPoint.x < 0){
-                this.fill = buffer.getRGB(0, startPoint.y);
-                floodFill(0,startPoint.y);
-            } else if(startPoint.x >= buffer.getWidth()){
-                this.fill = buffer.getRGB(buffer.getWidth() - 1, startPoint.y);
-                floodFill(buffer.getWidth() - 1,startPoint.y);
+            if (startPoint.x < 0) {
+                floodFill(0, startPoint.y);
+            } else if (startPoint.x >= buffer.getWidth()) {
+                floodFill(buffer.getWidth() - 1, startPoint.y);
+            } else if (startPoint.y < 0) {
+                floodFill(startPoint.x, 0);
+            } else if (startPoint.y >= buffer.getHeight()) {
+                floodFill(startPoint.x, buffer.getHeight() - 1);
             } else {
-                this.fill = buffer.getRGB(startPoint.x, startPoint.y);
-                floodFill(startPoint.x,startPoint.y);
+                floodFill(startPoint.x, startPoint.y);
             }
-//|| startPoint.x >= buffer.getWidth() || startPoint.y < 0 || startPoint.y >= buffer.getHeight()getHeight
         }
         
         //Flood Fill con Stack
@@ -52,10 +52,10 @@ public class FloodFill {
                 }
 
                 //Revisa que el pixel si el pixel ya es del color tanto que sea del color a rellenar
-                if(buffer.getRGB(p.x, p.y) == fill && buffer.getRGB(p.x, p.y) != c) {
-                    
+                if(buffer.getRGB(p.x, p.y) != c) {
+
                     buffer.setRGB(p.x, p.y, c);
-                    
+
                     stack.push(new Point(p.x - 1, p.y));
                     stack.push(new Point(p.x + 1, p.y));
                     stack.push(new Point(p.x, p.y - 1));

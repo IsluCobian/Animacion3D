@@ -10,16 +10,16 @@ package strdatos;
  * Autor: Luis Cobian
  * Registro: 20310016
  */
-public class AnimationFeatures {
-    int[] trasValues; //dx,dy,dz
+public class AnimationFeatures2D {
+    int[] trasValues; //dx,dy
     double[] tiempos; //Inicio,Final
-    double[] scaleValues; //sx,sy,sz
-    protected int[] rotationVector;
+    double[] scaleValues; //sx,sy
+    int ang; //En Grados sexagesimales
 
-    public AnimationFeatures() {
+    public AnimationFeatures2D() {
         trasValues = null;
         scaleValues = null;
-        rotationVector = new int[]{0,0,0};
+        ang = 0;
     }
     
     //getters
@@ -30,7 +30,7 @@ public class AnimationFeatures {
 
     public double[] getScaleValues() {return scaleValues;}
 
-    public int[] getAng() {return rotationVector;}
+    public int getAng() {return ang;}
     
     //setters
 
@@ -40,6 +40,6 @@ public class AnimationFeatures {
 
     public void setScaleValues(double[] scaleValues) {this.scaleValues = scaleValues;}
 
-    public void setAng(int[] rotVector) {rotationVector = rotVector;}
+    public void setAng(int ang) {this.ang = ang;}
    
 }
