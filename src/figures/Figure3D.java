@@ -16,6 +16,7 @@ public abstract class Figure3D {
     protected BufferedImage buffer, auxBuffer;
     protected Color color;
     protected boolean steps = false;
+    protected boolean pyramid = false;
     protected AnimationFeatures animationFeatures;
     protected List<Edge> scannedEdges;
     protected List<Point3D> facesPoints;
@@ -120,7 +121,7 @@ public abstract class Figure3D {
         facesPoints.add(new Point3D((int) ((points[0].x + points[1].x) / 2.0), (int) (((points[0].y + points[1].y) / 2.0)), ((points[0].z + points[4].z) / 2)));
 
         //cara superior
-        facesPoints.add(new Point3D((int) ((points[2].x + points[3].x) / 2.0), (int) (((points[2].y + points[3].y) / 2.0) ), ((points[0].z + points[4].z) / 2)));
+        facesPoints.add(new Point3D((int) ((points[2].x + points[3].x) / 2.0), (int) (((points[2].y + points[3].y) / 2.0)), ((points[0].z + points[4].z) / 2)));
 
         //cara lateral izquierda
         facesPoints.add(new Point3D(points[0].x - 1, (int) ((points[0].y + points[6].y) / 2.0), (int) ((points[0].z + points[6].z) / 2.0)));
@@ -129,6 +130,48 @@ public abstract class Figure3D {
         facesPoints.add(new Point3D(points[1].x + 1, (int) ((points[1].y + points[7].y) / 2.0), (int) ((points[1].z + points[7].z) / 2.0)));
 
         // Dibujar las aristas del prisma cuadrangular
+        pyramid = false;
+        drawEdges();
+    }
+
+    protected void drawRectangularPyramid(Point3D A, Point3D B, Point3D C) {
+
+        points = new Point3D[5];
+        // Puntos de la base cuadrada
+        points[0] = A;
+        points[1] = new Point3D(A.x, B.y, A.z);
+        points[2] = B;
+        points[3] = new Point3D(B.x, A.y, B.z);
+        // Punto de la cima de la pirámide
+        points[4] = C;
+
+        scannedEdges = new ArrayList<>();
+        // Definir las aristas que se conectarán en la base cuadrada
+        scannedEdges.add(new Edge(points[0], points[1]));
+        scannedEdges.add(new Edge(points[1], points[2]));
+        scannedEdges.add(new Edge(points[2], points[3]));
+        scannedEdges.add(new Edge(points[3], points[0]));
+        // Conexiones entre la cima y los vértices de la base
+        scannedEdges.add(new Edge(points[0], points[4]));
+        scannedEdges.add(new Edge(points[1], points[4]));
+        scannedEdges.add(new Edge(points[2], points[4]));
+        scannedEdges.add(new Edge(points[3], points[4]));
+
+        facesPoints = new ArrayList<>();
+
+        // Cara Base
+        facesPoints.add(new Point3D((int) ((points[0].x + points[2].x) / 2.0), (int) ((points[0].y + points[2].y) / 2.0), (int) ((points[0].z + points[2].z) / 2.0)));
+
+        // Otras caras
+        facesPoints.add(new Point3D((int) ((points[0].x + points[1].x + points[4].x) / 3.0), (int) ((points[0].y + points[1].y + points[4].y) / 3.0), (int) ((points[0].z + points[1].z + points[4].z) / 3.0)));
+
+        facesPoints.add(new Point3D((int) ((points[1].x + points[2].x + points[4].x) / 3.0), (int) ((points[1].y + points[2].y + points[4].y) / 3.0), (int) ((points[1].z + points[2].z + points[4].z) / 3.0)));
+
+        facesPoints.add(new Point3D((int) ((points[2].x + points[3].x + points[4].x) / 3.0), (int) ((points[2].y + points[3].y + points[4].y) / 3.0), (int) ((points[2].z + points[3].z + points[4].z) / 3.0)));
+
+        facesPoints.add(new Point3D((int) ((points[3].x + points[0].x + points[4].x) / 3.0), (int) ((points[3].y + points[0].y + points[4].y) / 3.0), (int) ((points[3].z + points[0].z + points[4].z) / 3.0)));
+        // Dibujar las aristas de la pirámide rectangular
+        pyramid = true;
         drawEdges();
     }
 
@@ -152,7 +195,7 @@ public abstract class Figure3D {
         return result;
     }
 
-    public void translate(int tiempo){
+    public void translate(long tiempo){
         int [] trans = animationFeatures.getTrasValues();
 
         translateMatrix = new double[][]{{1, 0, 0, (double) trans[0]/tiempo},{0, 1, 0, (double) trans[1]/tiempo},{0, 0, 1, (double) trans[2]/tiempo},{0, 0, 0, 1}};
@@ -174,7 +217,7 @@ public abstract class Figure3D {
         return new Point3D((int) newPosition[0],(int) newPosition[1],(int) newPosition[2]);
     }
 
-    public void scalate(int tiempo){
+    public void scalate(long tiempo){
         double [] scale = animationFeatures.getScaleValues();
 
         /*double centerX = (getStart().x + getEnd().x) / 2.0;
@@ -193,7 +236,7 @@ public abstract class Figure3D {
         endPoint.y = (int) (newEnd[1] + centerY);*/
     }
 
-    public void rotate(int tiempo){
+    public void rotate(long tiempo){
         rotationVector[0] += animationFeatures.getAng()[0]/tiempo;
         rotationVector[1] += animationFeatures.getAng()[1]/tiempo;
         rotationVector[2] += animationFeatures.getAng()[2]/tiempo;
@@ -268,6 +311,12 @@ public abstract class Figure3D {
 
     public void setRotationVector(int[] rotVector){
         animationFeatures.setAng(rotVector);
+    }
+
+    public void setRotation(int rx, int ry, int rz){
+        rotationVector[0] = rx;
+        rotationVector[1] = ry;
+        rotationVector[2] = rz;
     }
 
     public void setSteps(boolean steps) {
@@ -354,13 +403,12 @@ public abstract class Figure3D {
             }
         }
 
-
         for (Edge edge : scannedEdges) {
-            /*if (edge.p1.equals(smallestZPoint)|| edge.p2.equals(smallestZPoint)) {
-                continue;
-            }*/
             Point3D p1 = translate(rotate(edge.p1));
             Point3D p2 = translate(rotate(edge.p2));
+            if ((edge.p1.equals(smallestZPoint)|| edge.p2.equals(smallestZPoint)) && pyramid) {
+                continue;
+            }
             Point A, B;
             if (projectParallel){
                 A = parallelProjection(p1);
@@ -373,18 +421,16 @@ public abstract class Figure3D {
 
             drawLine(A.x, A.y, B.x, B.y);
         }
-        int i =0;
         for (Point3D point : facesPoints){
             Point3D p = translate(rotate(point));
             facesPoints.set(facesPoints.indexOf(point), translate(point));
-            i+=2;
             Point floodPoint;
             if (projectParallel){
                 floodPoint = parallelProjection(p);
             } else {
                 floodPoint = perspectiveProjection(p);
             }
-            //drawCircle(new Point(x, y),4 + i);
+            //drawCircle(floodPoint,4);
             new FloodFill(floodPoint,color ,buffer);
         }
         color = color.darker();
@@ -448,7 +494,7 @@ public abstract class Figure3D {
         rotationPoint = new Point3D((int) centerX, (int) centerY, (int) centerZ);
     }
     //Metodos de Proyeccion
-    private Point parallelProjection(Point3D point3D){
+    protected Point parallelProjection(Point3D point3D){
         double u = (vector[2] == 0) ? 0 : (double) point3D.z / vector[2];
 
         // Proyecta las Coordenadas en plano XY
@@ -458,7 +504,7 @@ public abstract class Figure3D {
         return new Point(x,y);
     }
 
-    private Point perspectiveProjection(Point3D point3D){
+    protected Point perspectiveProjection(Point3D point3D){
         double u = (point3D.z - pointOfView.z) == 0 ? 0 : (double) -pointOfView.z / (point3D.z - pointOfView.z);
 
         // Proyecta las coordenadas en el plano XY
@@ -488,6 +534,10 @@ public abstract class Figure3D {
 
     public int[] getRotationVector() {
         return rotationVector;
+    }
+
+    public void setStartPoint(Point3D startPoint) {
+        this.startPoint = startPoint;
     }
 }
 
